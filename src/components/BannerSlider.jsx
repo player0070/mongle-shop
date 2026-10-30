@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { banners } from '../data/mockData'
 
 export default function BannerSlider() {
@@ -29,14 +30,14 @@ export default function BannerSlider() {
     <section className="relative overflow-hidden bg-[#f5f5f5]">
       <div ref={scroller} onScroll={onScroll} onPointerDown={pause} onTouchStart={pause} className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto">
         {banners.map((banner) => (
-          <article key={banner.id} className="relative min-w-full snap-center aspect-[4/4.65] overflow-hidden">
-            <img src={banner.image} alt={banner.title} className="absolute inset-0 h-full w-full object-cover" />
+          <Link key={banner.id} to={`/product/${banner.productId}`} draggable={false} className="relative block min-w-full snap-center aspect-[4/4.65] overflow-hidden">
+            <img src={banner.image} alt={banner.title} draggable={false} className="absolute inset-0 h-full w-full object-cover" />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/50 to-transparent px-5 pb-7 pt-24 text-white">
               <p className="mb-2 text-[10px] font-semibold tracking-[0.2em]">{banner.eyebrow}</p>
               <h2 className="text-[27px] font-semibold leading-[1.12] tracking-tightest">{banner.title}</h2>
               <p className="mt-2 text-[12px] text-white/85">{banner.subtitle}</p>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
       <div className="absolute bottom-5 right-5 flex gap-1.5">

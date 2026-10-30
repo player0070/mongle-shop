@@ -1,17 +1,18 @@
 export const banners = [
-  { id: 1, eyebrow: 'NEW DROP', title: '작고 귀여운 포인트', subtitle: '오늘의 취향을 가볍게 더해요.', image: '/banners/banner-1.svg' },
-  { id: 2, eyebrow: 'MONGLE RING', title: '매일 끼는 작은 반지', subtitle: '심플한 실루엣, 편안한 무드.', image: '/banners/banner-2.svg' },
-  { id: 3, eyebrow: 'JIBBITZ', title: '한 칸씩 채우는 재미', subtitle: '나만의 조합으로 완성해보세요.', image: '/banners/banner-3.svg' },
-  { id: 4, eyebrow: 'WEEKLY PICK', title: '이번 주 가장 사랑받은 것들', subtitle: 'MONGLE의 베스트 셀렉션.', image: '/banners/banner-4.svg' },
+  { id: 1, productId: 'jb-black-puppy', eyebrow: 'NEW DROP · BLACK PUPPY', title: '까만 신발 위 작은 강아지', subtitle: '강아지와 하트, 발바닥으로 꾸미는 블랙 퍼피 지비츠', image: '/banners/banner-black-puppy.webp' },
+  { id: 2, productId: 'jb-brown-bear', eyebrow: 'BROWN BEAR', title: '리본 달고 온 곰돌이', subtitle: '곰돌이와 리본, 꽃이 어우러진 브라운 베어 지비츠', image: '/banners/banner-brown-bear.webp' },
+  { id: 3, productId: 'jb-bakery-bear', eyebrow: 'BAKERY BEAR', title: '갓 구운 빵처럼 말랑하게', subtitle: '테디베어와 도넛, 빵 모양의 베이커리 베어 지비츠', image: '/banners/banner-bakery-bear.webp' },
+  { id: 4, productId: 'jb-check-bunny', eyebrow: 'CHECK BUNNY', title: '체크 무늬 위 하얀 토끼', subtitle: '토끼와 체크, 꽃으로 완성하는 체크 버니 지비츠', image: '/banners/banner-check-bunny.webp' },
 ]
 
+// 가격(price)은 임시 값입니다. 실제 판매가로 바꿔주세요. stock은 item/items.txt 수량 기준입니다.
 export const products = [
-  { id: 'p1', name: 'Cloud Jibbitz', price: 5900, category: 'JIBBITZ', badge: 'BEST', image: '/products/product-1.svg', description: '몽글몽글한 구름 모양의 미니 지비츠. 단독으로도, 다른 참과 함께도 잘 어울려요.' },
-  { id: 'p2', name: 'Tiny Heart Ring', price: 12900, category: 'RING', badge: 'NEW', image: '/products/product-2.svg', description: '작은 하트 포인트가 들어간 데일리 링. 가볍고 미니멀한 스타일입니다.' },
-  { id: 'p3', name: 'Black Dot Jibbitz', price: 4900, category: 'JIBBITZ', badge: '', image: '/products/product-3.svg', description: '화이트 슈즈에 잘 어울리는 블랙 도트 참. MONGLE의 모노톤 무드를 담았어요.' },
-  { id: 'p4', name: 'Wave Ring', price: 14900, category: 'RING', badge: 'BEST', image: '/products/product-4.svg', description: '부드럽게 흐르는 곡선을 살린 얇은 웨이브 링.' },
-  { id: 'p5', name: 'Mini Star Charm', price: 6900, category: 'CHARM', badge: '', image: '/products/product-5.svg', description: '가볍게 달기 좋은 별 모양 미니 참.' },
-  { id: 'p6', name: 'Soft Pearl Ring', price: 15900, category: 'RING', badge: 'NEW', image: '/products/product-6.svg', description: '작은 진주 포인트가 들어간 정돈된 무드의 링.' },
+  { id: 'jb-black-puppy', name: '블랙 퍼피 지비츠', price: 5900, category: 'JIBBITZ', badge: '', image: '/products/jb-black-puppy.webp', stock: 12, description: '귀여운 강아지와 하트, 발바닥 모양의 신발 장식, 크록스 및 샌들용 DIY 신발 액세서리' },
+  { id: 'jb-brown-bear', name: '브라운 베어 지비츠', price: 5900, category: 'JIBBITZ', badge: '', image: '/products/jb-brown-bear.webp', stock: 10, description: '귀여운 브라운 곰돌이와 리본, 꽃 장식이 어우러진 DIY 신발 액세서리 세트' },
+  { id: 'jb-bakery-bear', name: '베이커리 베어 지비츠', price: 5900, category: 'JIBBITZ', badge: '', image: '/products/jb-bakery-bear.webp', stock: 12, description: '테디베어와 도넛, 빵 모양의 DIY 신발 장식 세트, 크록스 및 슬리퍼용 액세서리' },
+  { id: 'jb-check-bunny', name: '체크 버니 지비츠', price: 5900, category: 'JIBBITZ', badge: '', image: '/products/jb-check-bunny.webp', stock: 16, description: '토끼와 체크 패턴, 꽃 모양이 어우러진 DIY 신발 장식 세트, 크록스 및 샌들용 액세서리' },
+  { id: 'kr-cloud-whitestar', name: '다다랜드 몽실구름 복슬 인형 데일리 키링, 화이트스타', price: 8900, category: 'KEYRING', badge: '', image: '/products/kr-cloud-whitestar.webp', stock: 2, description: '말랑하고 사랑스러운 다다랜드 몽실구름 복슬 인형 데일리 키링, 화이트스타 7cm' },
+  { id: 'kr-kkamnyang-cat', name: '다다랜드 깜냥 고양이 인형 키링', price: 8900, category: 'KEYRING', badge: '', image: '/products/kr-kkamnyang-cat.webp', stock: 2, description: '귀여운 다다랜드 깜냥 고양이 인형 키링, 9cm, 블랙' },
+  { id: 'kr-hip-cat', name: '다다랜드 힙 고양이 키링', price: 8900, category: 'KEYRING', badge: '', image: '/products/kr-hip-cat.webp', stock: 1, description: '힙함에 귀여움 더한 다다랜드 힙 고양이 키링, 7.5cm, 헤드셋 고양이' },
+  { id: 'bag-mini-eco-navy', name: '무지 캔버스 미니 에코백', price: 9900, category: 'BAG', badge: '', image: '/products/bag-mini-eco-navy.webp', stock: 2, description: '깔끔함이 매력적인 무지 캔버스 미니 에코백, 네이비 색, 26×21×10cm' },
 ]
-
-export const categories = ['ALL', 'JIBBITZ', 'RING', 'CHARM']

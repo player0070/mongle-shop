@@ -1,18 +1,16 @@
 import { ArrowLeft } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { DELIVERY_HOURS, DELIVERY_NOTICE, LAST_ORDER_KEY, MAX_QUANTITY } from '../config/shop'
+import { DELIVERY_NOTICE, LAST_ORDER_KEY, MAX_QUANTITY, PAYMENT_DEADLINE_HOURS } from '../config/shop'
 import { formatPhone, isValidPhone, onlyDigits, won } from '../lib/format'
 import { searchAddress } from '../lib/postcode'
 import { clearCart, useCart } from '../lib/cart'
+import { useGoBack } from '../lib/navigation'
 import { isSoldOut, maxOrderQuantity, useProducts } from '../lib/products'
 import { supabase } from '../lib/supabase'
 
 
-const blank = { name: '', phone: '', depositor: '', zipcode: '', address1: '', address2: '', timeStart: '', timeEnd: '' }
-
-const hourLabel = (h) => `${String(h).padStart(2, '0')}:00`
-const DELIVERY_TIMES = Array.from({ length: DELIVERY_HOURS.end - DELIVERY_HOURS.start + 1 }, (_, i) => hourLabel(DELIVERY_HOURS.start + i))
+const blank = { name: '', phone: '', depositor: '', zipcode: '', address1: '', address2: '' }
 
 function validate(form) {
   const errors = {}
@@ -20,8 +18,6 @@ function validate(form) {
   if (!isValidPhone(form.phone)) errors.phone = '휴대폰 번호를 정확히 입력해주세요.'
   if (!form.depositor.trim()) errors.depositor = '입금하실 분의 이름을 입력해주세요.'
   if (!form.address1.trim()) errors.address1 = '배송받을 주소를 입력해주세요.'
-  if (!form.timeStart || !form.timeEnd) errors.time = '받으실 시간을 선택해주세요.'
-  else if (form.timeStart >= form.timeEnd) errors.time = '끝 시간은 시작 시간보다 늦어야 합니다.'
   return errors
 }
 
@@ -40,8 +36,9 @@ function Field({ id, label, required, error, hint, children }) {
 
 export default function Checkout() {
   const navigate = useNavigate()
+  const goBack = useGoBack()
   const [params] = useSearchParams()
-  const { products, loading: productLoading } = useProducts()
+  const { products, loading: productLoading } = useProducts({ refresh: true })
   const cart = useCart()
   // ?from=cart 이면 장바구니 전체, 아니면 상세페이지의 '바로 구매하기' 한 상품
   const fromCart = params.get('from') === 'cart'
@@ -99,8 +96,6 @@ export default function Checkout() {
       p_address1: form.address1.trim(),
       p_address2: form.address2.trim(),
       p_items: items.map((i) => ({ product_id: i.product.id, quantity: i.quantity })),
-      p_delivery_start: form.timeStart,
-      p_delivery_end: form.timeEnd,
     })
     setSubmitting(false)
 
@@ -119,7 +114,7 @@ export default function Checkout() {
 
   const header = (
     <header className="sticky top-0 z-30 flex h-[62px] items-center border-b border-black/10 bg-white px-4">
-      <button type="button" aria-label="뒤로" onClick={() => navigate(-1)}><ArrowLeft className="h-5 w-5" strokeWidth={1.6} /></button>
+      <button type="button" aria-label="뒤로" onClick={goBack}><ArrowLeft className="h-5 w-5" strokeWidth={1.6} /></button>
       <h1 className="absolute left-1/2 -translate-x-1/2 text-sm font-semibold">주문하기</h1>
     </header>
   )
@@ -188,19 +183,6 @@ export default function Checkout() {
               <input ref={address2Ref} className={fieldClass('address2')} placeholder="상세주소 (동/호수 등)" maxLength={200} value={form.address2} onChange={update('address2')} />
             </div>
           </Field>
-          <Field id="timeStart" label="받으실 시간" required error={errors.time} hint="이 시간 사이에 받으실 수 있도록 배달원이 연락드려요.">
-            <div className="flex items-center gap-2">
-              <select id="timeStart" aria-label="시작 시간" className={fieldClass('time')} value={form.timeStart} onChange={update('timeStart')}>
-                <option value="">시작</option>
-                {DELIVERY_TIMES.slice(0, -1).map((t) => <option key={t} value={t}>{t}</option>)}
-              </select>
-              <span className="shrink-0 text-sm text-black/45">~</span>
-              <select aria-label="끝 시간" className={fieldClass('time')} value={form.timeEnd} onChange={update('timeEnd')}>
-                <option value="">끝</option>
-                {DELIVERY_TIMES.slice(1).map((t) => <option key={t} value={t} disabled={Boolean(form.timeStart) && t <= form.timeStart}>{t}</option>)}
-              </select>
-            </div>
-          </Field>
         </section>
 
         <section className="mt-10 border-y border-black/10 py-6">
@@ -212,11 +194,12 @@ export default function Checkout() {
         <section className="mt-6 border border-black/10 p-4">
           <p className="text-xs font-semibold">결제 방법 · 계좌이체</p>
           <p className="mt-2 text-[12px] leading-5 text-black/55">주문 후 안내되는 계좌로 입금해주세요. 입금이 확인되면 배송을 준비합니다. 최종 금액은 주문 시점의 판매가로 다시 계산됩니다.</p>
+          <p className="mt-1 text-[12px] font-semibold leading-5 text-[#c4302b]">주문 후 {PAYMENT_DEADLINE_HOURS}시간 안에 입금이 확인되지 않으면 주문이 자동 취소됩니다.</p>
         </section>
 
         <label className="mt-6 flex items-start gap-2 text-[11px] leading-5 text-black/60">
           <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-1 accent-black" />
-          <span>주문 처리 및 배송을 위해 이름, 휴대폰 번호, 입금자명, 배송지 주소를 수집·이용하는 데 동의합니다. (필수)</span>
+          <span>주문 처리 및 배송을 위해 이름, 휴대폰 번호, 입금자명, 배송지 주소를 수집·이용하는 데 동의합니다. (필수) 수집한 정보는 rookie 창업 동아리 활동이 끝나는 즉시 파기합니다. 동의하지 않으실 수 있으나, 이 경우 주문이 불가능합니다.</span>
         </label>
 
         <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-[520px] -translate-x-1/2 border-t border-black/10 bg-white p-4 safe-bottom">

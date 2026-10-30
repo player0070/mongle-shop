@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { bankAccount, hasBankAccount } from '../config/shop'
+import { PAYMENT_DEADLINE_HOURS, bankAccount, hasBankAccount } from '../config/shop'
 import { copyText, won } from '../lib/format'
 
 export default function BankAccountCard({ amount, depositorName }) {
@@ -33,6 +33,7 @@ export default function BankAccountCard({ amount, depositorName }) {
         {depositorName && <div className="flex justify-between"><dt className="text-black/50">입금자명</dt><dd className="font-semibold">{depositorName}</dd></div>}
       </dl>
       <p className="mt-4 text-[11px] leading-5 text-black/50">입금자명과 금액이 주문 정보와 같아야 빠르게 확인됩니다. 입금이 확인되면 배송을 준비합니다.</p>
+      <p className="mt-1 text-[11px] font-semibold leading-5 text-[#c4302b]">주문 후 {PAYMENT_DEADLINE_HOURS}시간 안에 입금이 확인되지 않으면 주문이 자동 취소됩니다.</p>
     </div>
   )
 }

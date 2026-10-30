@@ -19,13 +19,19 @@ export function formatDateTime(value) {
   })
 }
 
-const shippingLabels = { preparing: '배송 준비', shipping: '배송 중', delivered: '배송 완료' }
+// 진행 순서대로. 주문 취소(cancelled)는 이 흐름 밖의 상태입니다.
+export const ORDER_STEPS = [
+  { value: 'awaiting_deposit', label: '입금 대기' },
+  { value: 'deposit_confirmed', label: '입금 확인' },
+  { value: 'preparing', label: '배송 준비' },
+  { value: 'shipping', label: '배송 중' },
+  { value: 'delivered', label: '배송 완료' },
+]
 
 // 손님에게 보여줄 주문 상태 한 줄
-export function orderStatusLabel(order) {
-  if (order.payment_status !== 'confirmed') return '입금 대기'
-  if (order.shipping_status === 'preparing') return '입금 확인 · 배송 준비'
-  return shippingLabels[order.shipping_status] || order.shipping_status
+export function orderStatusLabel(status) {
+  if (status === 'cancelled') return '주문 취소'
+  return ORDER_STEPS.find((s) => s.value === status)?.label || status
 }
 
 export async function copyText(text) {

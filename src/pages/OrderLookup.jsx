@@ -1,14 +1,8 @@
 import { useState } from 'react'
 import BankAccountCard from '../components/BankAccountCard'
-import { formatDateTime, formatPhone, isValidPhone, onlyDigits, orderStatusLabel, won } from '../lib/format'
+import { ORDER_STEPS, formatDateTime, formatPhone, isValidPhone, onlyDigits, orderStatusLabel, won } from '../lib/format'
 import { supabase } from '../lib/supabase'
 
-const steps = ['입금 대기', '배송 준비', '배송 중', '배송 완료']
-
-function stepIndex(order) {
-  if (order.payment_status !== 'confirmed') return 0
-  return { preparing: 1, shipping: 2, delivered: 3 }[order.shipping_status] ?? 1
-}
 
 export default function OrderLookup() {
   const [orderCode, setOrderCode] = useState('')
@@ -33,7 +27,8 @@ export default function OrderLookup() {
   }
 
   const inputClass = 'h-12 w-full border border-black/15 px-3 text-sm outline-none focus:border-black'
-  const current = order ? stepIndex(order) : 0
+  const cancelled = order?.status === 'cancelled'
+  const current = order ? ORDER_STEPS.findIndex((s) => s.value === order.status) : -1
 
   return (
     <section className="px-5 pb-16 pt-10">
@@ -57,17 +52,26 @@ export default function OrderLookup() {
                 <p className="font-semibold tracking-wide">{order.order_code}</p>
                 <p className="mt-1 text-[11px] text-black/45">{formatDateTime(order.created_at)} 주문</p>
               </div>
-              <span className="shrink-0 bg-black px-2 py-1 text-[11px] font-semibold text-white">{orderStatusLabel(order)}</span>
+              <span className={`shrink-0 px-2 py-1 text-[11px] font-semibold ${cancelled ? 'bg-black/5 text-[#c4302b]' : 'bg-black text-white'}`}>{orderStatusLabel(order.status)}</span>
             </div>
 
-            <ol className="mt-5 grid grid-cols-4 gap-1 text-center text-[10px]">
-              {steps.map((label, i) => (
-                <li key={label}>
-                  <div className={`h-1 ${i <= current ? 'bg-black' : 'bg-black/10'}`} />
-                  <p className={`mt-1.5 ${i === current ? 'font-semibold text-black' : 'text-black/40'}`}>{label}</p>
-                </li>
-              ))}
-            </ol>
+            {cancelled ? (
+              <p className="mt-5 bg-black/[0.04] px-3 py-3 text-[12px] leading-5 text-black/65">
+                {order.cancel_reason === 'unpaid_timeout'
+                  ? '입금 기한 안에 입금이 확인되지 않아 주문이 자동 취소되었습니다.'
+                  : '주문이 취소되었습니다.'}
+                {order.cancelled_at && <span className="block text-[11px] text-black/45">{formatDateTime(order.cancelled_at)} 취소</span>}
+              </p>
+            ) : (
+              <ol className="mt-5 grid grid-cols-5 gap-1 text-center text-[10px]">
+                {ORDER_STEPS.map(({ value, label }, i) => (
+                  <li key={value}>
+                    <div className={`h-1 ${i <= current ? 'bg-black' : 'bg-black/10'}`} />
+                    <p className={`mt-1.5 ${i === current ? 'font-semibold text-black' : 'text-black/40'}`}>{label}</p>
+                  </li>
+                ))}
+              </ol>
+            )}
 
             <ul className="mt-5 space-y-2 border-t border-black/10 pt-4">
               {order.items.map((item, i) => (
@@ -82,11 +86,12 @@ export default function OrderLookup() {
             <dl className="mt-4 space-y-1.5 border-t border-black/10 pt-4 text-[12px]">
               <div className="flex gap-3"><dt className="w-14 shrink-0 text-black/45">입금자명</dt><dd>{order.depositor_name}</dd></div>
               <div className="flex gap-3"><dt className="w-14 shrink-0 text-black/45">배송지</dt><dd>{order.zipcode && `(${order.zipcode}) `}{order.address1} {order.address2}</dd></div>
-              {order.delivery_time_start && <div className="flex gap-3"><dt className="w-14 shrink-0 text-black/45">수령 시간</dt><dd>{order.delivery_time_start} ~ {order.delivery_time_end}</dd></div>}
+              {order.delivered_at && <div className="flex gap-3"><dt className="w-14 shrink-0 text-black/45">수령 일시</dt><dd>{formatDateTime(order.delivered_at)}</dd></div>}
+              {order.status === 'awaiting_deposit' && order.payment_deadline && <div className="flex gap-3"><dt className="w-14 shrink-0 text-black/45">입금 기한</dt><dd className="font-semibold text-[#c4302b]">{formatDateTime(order.payment_deadline)}까지</dd></div>}
             </dl>
           </div>
 
-          {order.payment_status !== 'confirmed' && <BankAccountCard amount={order.total_amount} depositorName={order.depositor_name} />}
+          {order.status === 'awaiting_deposit' && <BankAccountCard amount={order.total_amount} depositorName={order.depositor_name} />}
         </div>
       )}
     </section>

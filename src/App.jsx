@@ -7,6 +7,8 @@ import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import OrderComplete from './pages/OrderComplete'
 import OrderLookup from './pages/OrderLookup'
+import Terms from './pages/Terms'
+import Privacy from './pages/Privacy'
 
 export default function App() {
   const location = useLocation()
@@ -23,6 +25,8 @@ export default function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-complete" element={<OrderComplete />} />
           <Route path="/order-lookup" element={<OrderLookup />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
         </Routes>
       </main>
       {!isCheckout && <Footer />}

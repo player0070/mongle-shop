@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', 'sans-serif'],
+        sans: ['"Pretendard Variable"', 'Pretendard','Apple SD Gothic Neo', 'Noto Sans KR', 'sans-serif'],
       },
       letterSpacing: {
         tightest: '-0.035em',

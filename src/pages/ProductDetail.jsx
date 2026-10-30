@@ -5,10 +5,12 @@ import { won } from '../lib/format'
 import ProductCard from '../components/ProductCard'
 import { addToCart, MAX_CART_ITEMS } from '../lib/cart'
 import { isSoldOut, maxOrderQuantity, useProducts } from '../lib/products'
+import { useGoBack } from '../lib/navigation'
 
 export default function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const goBack = useGoBack()
   const [quantity, setQuantity] = useState(1)
   const [cartNotice, setCartNotice] = useState('')
   const { products, loading, error } = useProducts()
@@ -52,8 +54,9 @@ export default function ProductDetail() {
   return (
     <div>
       <div className="relative aspect-[4/4.9] bg-[#f5f5f5]">
-        <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
-        <button aria-label="뒤로" onClick={() => navigate(-1)} className="absolute left-4 top-4 grid h-10 w-10 place-items-center bg-white/90 backdrop-blur">
+        {/* 상품 사진 비율이 제각각이라(가로 2컷 사진 등) 잘리지 않도록 전체를 보여줍니다. */}
+        <img src={product.image} alt={product.name} className="h-full w-full object-contain" />
+        <button aria-label="뒤로" onClick={goBack} className="absolute left-4 top-4 grid h-10 w-10 place-items-center bg-white/90 backdrop-blur">
           <ArrowLeft className="h-5 w-5" strokeWidth={1.6} />
         </button>
       </div>
@@ -64,7 +67,7 @@ export default function ProductDetail() {
           <h1 className="text-[24px] font-semibold tracking-tightest">{product.name}</h1>
           <p className="whitespace-nowrap pt-1 text-[16px] font-semibold">{won(product.price)}</p>
         </div>
-        <p className="mt-5 text-[13px] leading-6 text-black/60">{product.description}</p>
+        <p className="mt-5 whitespace-pre-line text-[13px] leading-6 text-black/60">{product.description}</p>
       </section>
 
       <section className="border-y border-black/10 px-5 py-5">

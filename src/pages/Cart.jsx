@@ -7,7 +7,7 @@ import { isSoldOut, maxOrderQuantity, useProducts } from '../lib/products'
 export default function Cart() {
   const navigate = useNavigate()
   const cart = useCart()
-  const { products, loading, error } = useProducts()
+  const { products, loading, error } = useProducts({ refresh: true })
 
   // 저장된 { id, quantity }를 최신 상품 정보와 합칩니다. 판매가 끝난 상품은 product가 null입니다.
   const lines = cart.map((item) => ({ ...item, product: products.find((p) => p.id === item.id) || null }))

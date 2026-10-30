@@ -9,10 +9,20 @@ export const MAX_CART_ITEMS = 20
 
 const listeners = new Set()
 
+const clamp = (n) => Math.min(MAX_QUANTITY, Math.max(1, n))
+
+// 예전 버전이나 직접 수정된 값이 섞여 있을 수 있으므로 정수 1~99, 상품당 한 줄, 최대 20종으로 정리합니다.
 function read() {
   try {
     const parsed = JSON.parse(localStorage.getItem(CART_KEY))
-    return Array.isArray(parsed) ? parsed.filter((i) => i && typeof i.id === 'string' && i.quantity > 0) : []
+    if (!Array.isArray(parsed)) return []
+    const seen = new Set()
+    return parsed.flatMap((i) => {
+      const quantity = Math.floor(Number(i?.quantity))
+      if (typeof i?.id !== 'string' || !(quantity > 0) || seen.has(i.id)) return []
+      seen.add(i.id)
+      return [{ id: i.id, quantity: clamp(quantity) }]
+    }).slice(0, MAX_CART_ITEMS)
   } catch {
     return []
   }
@@ -25,8 +35,6 @@ function write(next) {
   try { localStorage.setItem(CART_KEY, JSON.stringify(next)) } catch { /* 저장 실패해도 현재 탭에서는 유지 */ }
   listeners.forEach((fn) => fn())
 }
-
-const clamp = (n) => Math.min(MAX_QUANTITY, Math.max(1, n))
 
 // 담기에 성공하면 true, 종류 수 제한에 걸리면 false
 export function addToCart(id, quantity = 1) {

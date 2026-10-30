@@ -9,7 +9,8 @@
 - 수량 선택 및 바로구매
 - 비회원 주문: 주문자 이름 · 휴대폰 번호 · 입금자명 · 배송지(카카오 우편번호 검색)만 입력
 - 계좌이체 결제: 주문 완료/주문조회 화면에 입금 계좌 안내
-- 주문번호 + 휴대폰 번호 기반 비회원 주문조회 (입금 대기 → 배송 준비 → 배송 중 → 배송 완료)
+- 주문번호 + 휴대폰 번호 기반 비회원 주문조회 (입금 대기 → 입금 확인 → 배송 준비 → 배송 중 → 배송 완료, 또는 주문 취소)
+- 주문 후 24시간 안에 입금 확인되지 않으면 자동 취소 (재고 복구)
 - 주문/입금/배송 관리는 별도 관리자 앱 `~/mongle-admin` 에서 처리
 
 ## 실행
@@ -22,8 +23,9 @@ npm run dev
 ## Supabase
 1. Supabase 프로젝트 생성
 2. SQL Editor에서 `supabase/schema.sql` 실행 (예전 스타터 스키마를 실행했다면 파일 상단 안내 참고)
-3. `.env` 에 `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_BANK_*` 입력
-4. `npm run dev` 재실행
+3. Dashboard > Database > Extensions 에서 `pg_cron` 켜기 (미입금 주문 자동 취소용. 켠 뒤 `schema.sql` 을 한 번 더 실행)
+4. `.env` 에 `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_BANK_*` 입력
+5. `npm run dev` 재실행
 
 Supabase가 연결되지 않으면 상품 화면은 `src/data/mockData.js` 로 보이지만 주문은 접수되지 않습니다.
 
@@ -31,8 +33,9 @@ Supabase가 연결되지 않으면 상품 화면은 `src/data/mockData.js` 로 �
 - 손님은 `orders`, `order_items` 테이블을 직접 읽거나 쓸 수 없습니다.
 - 주문 생성은 `create_order` RPC: 상품 가격을 DB에서 다시 조회해 총액을 계산하고, 주문번호(`MG261006-K7Q2ZP` 형식)를 서버에서 무작위로 만듭니다.
 - 주문조회는 `lookup_order` RPC: 주문번호와 휴대폰 번호가 모두 맞을 때만 필요한 필드를 반환합니다.
-- 재고는 `inventory` 테이블에서 관리합니다. 주문 시 자동 차감되고 부족하면 주문이 거부됩니다. 행이 없는 상품은 무제한(재고 관리 안 함)입니다. 품절 상품은 쇼핑몰에 SOLD OUT으로 표시됩니다.
-- 관리자는 Supabase Auth 로그인 + `admins` 테이블 등록이 필요하며, 입금 확인/배송 상태 변경은 `admin_*` RPC로만 가능합니다.
+- 재고는 `inventory` 테이블에서 관리합니다. 주문 시 자동 차감되고 부족하면 주문이 거부됩니다. 취소되지 않은 주문(입금 대기 포함)은 재고를 잡고 있고, 주문이 취소되면 되돌립니다. 행이 없는 상품은 무제한(재고 관리 안 함)입니다. 품절 상품은 쇼핑몰에 SOLD OUT으로 표시됩니다.
+- 관리자는 Supabase Auth 로그인 + `admins` 테이블 등록이 필요하며, 주문 상태 변경은 `admin_set_order_status` RPC로만 가능합니다.
+- 미입금 자동 취소는 `cancel_expired_orders()` 를 pg_cron 이 10분마다 실행합니다. 관리자 앱 주문 목록을 열 때도 한 번 실행됩니다.
 
 ## 실제 운영 전에 꼭 바꿀 부분
 - `public/products/*.svg`: 실제 상품 사진 또는 Supabase Storage URL로 교체

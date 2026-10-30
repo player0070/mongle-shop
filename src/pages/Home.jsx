@@ -2,8 +2,7 @@ import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import BannerSlider from '../components/BannerSlider'
 import ProductCard from '../components/ProductCard'
-import { categories } from '../data/mockData'
-import { useProducts } from '../lib/products'
+import { categoriesOf, useProducts } from '../lib/products'
 
 // BEST → NEW → 그 외(뱃지 없음 포함) 순으로 보여주고, 같은 단계 안에서는 sort_order를 따릅니다.
 const BADGE_RANK = { BEST: 0, NEW: 1 }
@@ -13,6 +12,7 @@ export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams()
   const category = searchParams.get('category') || 'ALL'
   const { products: items, loading, error } = useProducts()
+  const categories = useMemo(() => ['ALL', ...categoriesOf(items)], [items])
 
   const filtered = useMemo(() => {
     const list = category === 'ALL' ? items : items.filter((p) => p.category === category)
