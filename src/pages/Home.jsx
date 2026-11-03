@@ -2,9 +2,9 @@ import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import BannerSlider from '../components/BannerSlider'
 import ProductCard from '../components/ProductCard'
-import { categoriesOf, useProducts } from '../lib/products'
+import { categoriesOf, isSoldOut, useProducts } from '../lib/products'
 
-// BEST → NEW → 그 외(뱃지 없음 포함) 순으로 보여주고, 같은 단계 안에서는 sort_order를 따릅니다.
+// 품절 상품은 맨 아래로 보내고, 그 안에서 BEST → NEW → 그 외(뱃지 없음 포함) 순, 같은 단계 안에서는 sort_order를 따릅니다.
 const BADGE_RANK = { BEST: 0, NEW: 1 }
 const badgeRank = (p) => BADGE_RANK[(p.badge || '').toUpperCase()] ?? 2
 
@@ -16,7 +16,7 @@ export default function Home() {
 
   const filtered = useMemo(() => {
     const list = category === 'ALL' ? items : items.filter((p) => p.category === category)
-    return [...list].sort((a, b) => badgeRank(a) - badgeRank(b) || (a.sort_order ?? 0) - (b.sort_order ?? 0))
+    return [...list].sort((a, b) => isSoldOut(a) - isSoldOut(b) || badgeRank(a) - badgeRank(b) || (a.sort_order ?? 0) - (b.sort_order ?? 0))
   }, [category, items])
 
   const changeCategory = (next) => {

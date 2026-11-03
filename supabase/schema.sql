@@ -777,14 +777,14 @@ end $$;
 -- 가격은 임시 값입니다. 실제 판매가로 바꿔 실행하세요. (기존 DB의 상품 교체·재고 설정은 update_products.sql)
 insert into public.products (id, name, price, category, badge, image, description, sort_order)
 values
-('jb-black-puppy', '블랙 퍼피 지비츠', 5900, 'JIBBITZ', '', '/products/jb-black-puppy.webp', '귀여운 강아지와 하트, 발바닥 모양의 신발 장식, 크록스 및 샌들용 DIY 신발 액세서리', 1),
-('jb-brown-bear', '브라운 베어 지비츠', 5900, 'JIBBITZ', '', '/products/jb-brown-bear.webp', '귀여운 브라운 곰돌이와 리본, 꽃 장식이 어우러진 DIY 신발 액세서리 세트', 2),
-('jb-bakery-bear', '베이커리 베어 지비츠', 5900, 'JIBBITZ', '', '/products/jb-bakery-bear.webp', '테디베어와 도넛, 빵 모양의 DIY 신발 장식 세트, 크록스 및 슬리퍼용 액세서리', 3),
-('jb-check-bunny', '체크 버니 지비츠', 5900, 'JIBBITZ', '', '/products/jb-check-bunny.webp', '토끼와 체크 패턴, 꽃 모양이 어우러진 DIY 신발 장식 세트, 크록스 및 샌들용 액세서리', 4),
-('kr-cloud-whitestar', '다다랜드 몽실구름 복슬 인형 데일리 키링, 화이트스타', 8900, 'KEYRING', '', '/products/kr-cloud-whitestar.webp', '말랑하고 사랑스러운 다다랜드 몽실구름 복슬 인형 데일리 키링, 화이트스타 7cm', 5),
-('kr-kkamnyang-cat', '다다랜드 깜냥 고양이 인형 키링', 8900, 'KEYRING', '', '/products/kr-kkamnyang-cat.webp', '귀여운 다다랜드 깜냥 고양이 인형 키링, 9cm, 블랙', 6),
-('kr-hip-cat', '다다랜드 힙 고양이 키링', 8900, 'KEYRING', '', '/products/kr-hip-cat.webp', '힙함에 귀여움 더한 다다랜드 힙 고양이 키링, 7.5cm, 헤드셋 고양이', 7),
-('bag-mini-eco-navy', '무지 캔버스 미니 에코백', 9900, 'BAG', '', '/products/bag-mini-eco-navy.webp', '깔끔함이 매력적인 무지 캔버스 미니 에코백, 네이비 색, 26×21×10cm', 8)
+('jb-black-puppy', '블랙 퍼피 지비츠', 4900, 'JIBBITZ', '', '/products/jb-black-puppy.webp', '귀여운 강아지와 하트, 발바닥 모양의 신발 장식, 크록스 및 샌들용 DIY 신발 액세서리', 1),
+('jb-brown-bear', '브라운 베어 지비츠', 4900, 'JIBBITZ', '', '/products/jb-brown-bear.webp', '귀여운 브라운 곰돌이와 리본, 꽃 장식이 어우러진 DIY 신발 액세서리 세트', 2),
+('jb-bakery-bear', '베이커리 베어 지비츠', 4900, 'JIBBITZ', '', '/products/jb-bakery-bear.webp', '테디베어와 도넛, 빵 모양의 DIY 신발 장식 세트, 크록스 및 슬리퍼용 액세서리', 3),
+('jb-check-bunny', '체크 버니 지비츠', 4900, 'JIBBITZ', '', '/products/jb-check-bunny.webp', '토끼와 체크 패턴, 꽃 모양이 어우러진 DIY 신발 장식 세트, 크록스 및 샌들용 액세서리', 4),
+('kr-cloud-whitestar', '다다랜드 몽실구름 복슬 인형 데일리 키링, 화이트스타', 4900, 'KEYRING', '', '/products/kr-cloud-whitestar.webp', '말랑하고 사랑스러운 다다랜드 몽실구름 복슬 인형 데일리 키링, 화이트스타 7cm', 5),
+('kr-kkamnyang-cat', '다다랜드 깜냥 고양이 인형 키링', 4900, 'KEYRING', '', '/products/kr-kkamnyang-cat.webp', '귀여운 다다랜드 깜냥 고양이 인형 키링, 9cm, 블랙', 6),
+('kr-hip-cat', '다다랜드 힙 고양이 키링', 4900, 'KEYRING', '', '/products/kr-hip-cat.webp', '힙함에 귀여움 더한 다다랜드 힙 고양이 키링, 7.5cm, 헤드셋 고양이', 7),
+('bag-mini-eco-navy', '무지 캔버스 미니 에코백', 4900, 'BAG', '', '/products/bag-mini-eco-navy.webp', '깔끔함이 매력적인 무지 캔버스 미니 에코백, 네이비 색, 26×21×10cm', 8)
 on conflict (id) do nothing;
 
 
